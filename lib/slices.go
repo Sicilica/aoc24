@@ -57,3 +57,15 @@ func ReduceSeq[T any, U any](in iter.Seq[T], f func(U, T) U, init U) U {
 	}
 	return acc
 }
+
+func Pairs[T any](in []T) iter.Seq2[T, T] {
+	return func(yield func(T, T) bool) {
+		for i := range in {
+			for j := i + 1; j < len(in); j++ {
+				if !yield(in[i], in[j]) {
+					return
+				}
+			}
+		}
+	}
+}
