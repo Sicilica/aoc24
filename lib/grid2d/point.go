@@ -26,3 +26,12 @@ func (p Point) Minus(o Point) Point {
 func (p Point) Times(s int) Point {
 	return Point{p[0] * s, p[1] * s}
 }
+
+func (p Point) Equals(o Point) bool {
+	return p[0] == o[0] && p[1] == o[1]
+}
+
+func (p Point) OnEdge(r Rect) bool {
+	// return true if point p is on the edge of rectangle r, otherwise false
+	return ((p[0] == r[0][0] || p[0] == r[1][0]) && (p[1] >= r[0][1] && p[1] <= r[1][1])) || ((p[1] == r[0][1] || p[1] == r[1][1]) && (p[1] >= r[0][1] && p[1] <= r[1][1]))
+}

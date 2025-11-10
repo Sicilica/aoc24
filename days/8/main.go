@@ -20,7 +20,7 @@ func main() {
 	)
 }
 
-func input() (grid2d.Grid[byte], map[byte][]grid2d.Point) {
+func input() (grid2d.FixedGrid[byte], map[byte][]grid2d.Point) {
 	grid := grid2d.Transpose(slices.Collect(lib.MapSeq(strings.Lines(rawInput), func(l string) []byte {
 		return lib.Map(strings.Split(strings.TrimSpace(l), ""), func(s string) byte {
 			lib.Assert(len(s) == 1)
@@ -43,8 +43,8 @@ func input() (grid2d.Grid[byte], map[byte][]grid2d.Point) {
 	return grid, antennas
 }
 
-func part1(grid grid2d.Grid[byte], antennas map[byte][]grid2d.Point) int {
-	antinodes := grid2d.NewGrid[bool](grid.Width(), grid.Height())
+func part1(grid grid2d.FixedGrid[byte], antennas map[byte][]grid2d.Point) int {
+	antinodes := grid2d.NewFixed[bool](grid.Width(), grid.Height())
 
 	for _, antennas := range antennas {
 		for a, b := range lib.Pairs(antennas) {
@@ -54,13 +54,13 @@ func part1(grid grid2d.Grid[byte], antennas map[byte][]grid2d.Point) int {
 		}
 	}
 
-	return antinodes.Count(func(val bool) bool {
+	return grid2d.Count(antinodes, func(val bool) bool {
 		return val
 	})
 }
 
-func part2(grid grid2d.Grid[byte], antennas map[byte][]grid2d.Point) int {
-	antinodes := grid2d.NewGrid[bool](grid.Width(), grid.Height())
+func part2(grid grid2d.FixedGrid[byte], antennas map[byte][]grid2d.Point) int {
+	antinodes := grid2d.NewFixed[bool](grid.Width(), grid.Height())
 
 	for _, antennas := range antennas {
 		for a, b := range lib.Pairs(antennas) {
@@ -78,7 +78,7 @@ func part2(grid grid2d.Grid[byte], antennas map[byte][]grid2d.Point) int {
 		}
 	}
 
-	return antinodes.Count(func(val bool) bool {
+	return grid2d.Count(antinodes, func(val bool) bool {
 		return val
 	})
 }
