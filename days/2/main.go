@@ -32,7 +32,7 @@ func part1(reports [][]int) int {
 func part2(reports [][]int) int {
 	return lib.Count(reports, func(r []int) bool {
 		subReport := make([]int, len(r)-1)
-		for i := 0; i < len(r); i++ {
+		for i := range r {
 			copy(subReport[0:], r[0:i])
 			copy(subReport[i:], r[i+1:])
 			if safe(subReport) {

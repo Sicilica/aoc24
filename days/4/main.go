@@ -80,8 +80,8 @@ func search(data [][]byte, target byte) iter.Seq2[int, int] {
 	w := len(data)
 	h := len(data[0])
 	return func(yield func(int, int) bool) {
-		for x := 0; x < w; x++ {
-			for y := 0; y < h; y++ {
+		for x := range w {
+			for y := range h {
 				if data[x][y] == target {
 					if !yield(x, y) {
 						return

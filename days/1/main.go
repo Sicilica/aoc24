@@ -40,7 +40,7 @@ func part1(left, right []int) int {
 	slices.Sort(right)
 
 	totalDistance := 0
-	for i := 0; i < len(left); i++ {
+	for i := range left {
 		totalDistance += lib.Abs(left[i] - right[i])
 	}
 
