@@ -46,6 +46,16 @@ func MapSeq[T, U any](in iter.Seq[T], f func(T) U) iter.Seq[U] {
 	}
 }
 
+func MapSeq2[T, U, V any](in iter.Seq2[T, U], f func(T, U) V) iter.Seq[V] {
+	return func(yield func(V) bool) {
+		for t, u := range in {
+			if !yield(f(t, u)) {
+				return
+			}
+		}
+	}
+}
+
 func Reduce[T any, U any](in []T, f func(U, T) U, init U) U {
 	return ReduceSeq(slices.Values(in), f, init)
 }
