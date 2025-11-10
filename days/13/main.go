@@ -141,7 +141,7 @@ func (m Machine) SolutionsBig(offset int64) iter.Seq2[int64, int64] {
 		// Since we need both axes to be correct, and the lines aren't parallel, they intersect at exactly one point.
 		// BUT, that point could need a non-integer number of presses, negative presses, etc.
 		//
-		// We could also handle the case where the lines are parallel -- which either means they never cross, or our overlapping --
+		// We could also handle the case where the lines are parallel -- which either means they never cross, or are overlapping --
 		// but, it turns out the input data doesn't include any such cases.
 		numerator := float64(prize[0])/float64(buttonA[0]) - float64(prize[1])/float64(buttonA[1])
 		denominator := float64(buttonB[0])/float64(buttonA[0]) - float64(buttonB[1])/float64(buttonA[1])
