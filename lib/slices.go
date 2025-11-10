@@ -45,3 +45,15 @@ func MapSeq[T, U any](in iter.Seq[T], f func(T) U) iter.Seq[U] {
 		}
 	}
 }
+
+func Reduce[T any, U any](in []T, f func(U, T) U, init U) U {
+	return ReduceSeq(slices.Values(in), f, init)
+}
+
+func ReduceSeq[T any, U any](in iter.Seq[T], f func(U, T) U, init U) U {
+	var acc U
+	for v := range in {
+		acc = f(acc, v)
+	}
+	return acc
+}
