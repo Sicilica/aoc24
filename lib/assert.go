@@ -1,5 +1,7 @@
 package lib
 
+import "log"
+
 func Assert(cond bool) {
 	if !cond {
 		panic("assertion failed")
@@ -16,7 +18,10 @@ func Must[T any](v T, err error) T {
 }
 
 func NoErr(err error) {
-	Assert(err == nil)
+	if err != nil {
+		log.Println(err)
+		Assert(err == nil)
+	}
 }
 
 func NotEmpty[T any](v []T) []T {
