@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	"github.com/Sicilica/aoc24/lib"
-	"github.com/Sicilica/aoc24/lib/grid2d"
+	"github.com/Sicilica/aoc24/lib2"
 )
 
 //go:embed input.txt
@@ -24,9 +24,9 @@ func main() {
 }
 
 type Machine struct {
-	A     grid2d.Point
-	B     grid2d.Point
-	Prize grid2d.Point
+	A     lib2.Vec2i
+	B     lib2.Vec2i
+	Prize lib2.Vec2i
 }
 
 func input() []Machine {
@@ -38,7 +38,7 @@ func input() []Machine {
 	for l := range strings.Lines(rawInput) {
 		if strings.HasPrefix(l, "Button") {
 			m := lib.Match(buttonReg, l)
-			button := grid2d.Point{
+			button := lib2.Vec2i{
 				lib.Atoi(m[2]),
 				lib.Atoi(m[3]),
 			}
@@ -49,7 +49,7 @@ func input() []Machine {
 			}
 		} else if strings.HasPrefix(l, "Prize") {
 			m := lib.Match(prizeReg, l)
-			machine.Prize = grid2d.Point{
+			machine.Prize = lib2.Vec2i{
 				lib.Atoi(m[1]),
 				lib.Atoi(m[2]),
 			}

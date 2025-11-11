@@ -24,3 +24,12 @@ func NotNil[T any](v *T) *T {
 	Assert(v != nil)
 	return v
 }
+
+func OK[T any](v T, ok bool) T {
+	Assert(ok)
+	return v
+}
+
+func IgnoreOK[T any](v T, ok bool) T {
+	return v
+}

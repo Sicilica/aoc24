@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/Sicilica/aoc24/lib"
-	"github.com/Sicilica/aoc24/lib/grid2d"
+	"github.com/Sicilica/aoc24/lib2"
 )
 
 //go:embed input.txt
@@ -20,18 +20,16 @@ func main() {
 	)
 }
 
-func input() grid2d.FixedGrid[int] {
-	return grid2d.Transpose(slices.Collect(lib.MapSeq(strings.Lines(rawInput), func(l string) []int {
+func input() lib2.FixedGrid2[int] {
+	return lib2.Transpose(slices.Collect(lib.MapSeq(strings.Lines(rawInput), func(l string) []int {
 		return lib.Map(strings.Split(strings.TrimSpace(l), ""), lib.Atoi)
 	})))
 }
 
-func part1(grid grid2d.FixedGrid[int]) int {
-	trailheads := grid2d.FindIndex(grid, func(height int) bool {
-		return height == 0
-	})
+func part1(grid lib2.FixedGrid2[int]) int {
+	trailheads := lib2.Indices(grid.All(), 0)
 
-	dirs := []grid2d.Point{
+	dirs := []lib2.Vec2i{
 		{1, 0},
 		{0, 1},
 		{-1, 0},
@@ -39,9 +37,9 @@ func part1(grid grid2d.FixedGrid[int]) int {
 	}
 
 	sum := 0
-	peaks := grid2d.SparseGrid[struct{}]{}
-	explored := grid2d.SparseGrid[struct{}]{}
-	var queue []grid2d.Point
+	peaks := lib2.SparseGrid2i[struct{}]{}
+	explored := lib2.SparseGrid2i[struct{}]{}
+	var queue []lib2.Vec2i
 	for t := range trailheads {
 		clear(peaks)
 		clear(explored)
@@ -53,7 +51,7 @@ func part1(grid grid2d.FixedGrid[int]) int {
 		for len(queue) > 0 {
 			p := queue[len(queue)-1]
 			queue = queue[:len(queue)-1]
-			height := grid.Get(p)
+			height := lib.OK(grid.Get(p))
 
 			if height >= 9 {
 				score++
@@ -62,7 +60,7 @@ func part1(grid grid2d.FixedGrid[int]) int {
 
 			for _, dir := range dirs {
 				next := p.Plus(dir)
-				if grid.Get(next) == height+1 && !explored.Has(next) {
+				if lib.IgnoreOK(grid.Get(next)) == height+1 && !explored.Has(next) {
 					explored.Set(next, struct{}{})
 					queue = append(queue, next)
 				}
@@ -73,12 +71,10 @@ func part1(grid grid2d.FixedGrid[int]) int {
 	return sum
 }
 
-func part2(grid grid2d.FixedGrid[int]) int {
-	trailheads := grid2d.FindIndex(grid, func(height int) bool {
-		return height == 0
-	})
+func part2(grid lib2.FixedGrid2[int]) int {
+	trailheads := lib2.Indices(grid.All(), 0)
 
-	dirs := []grid2d.Point{
+	dirs := []lib2.Vec2i{
 		{1, 0},
 		{0, 1},
 		{-1, 0},
@@ -86,8 +82,8 @@ func part2(grid grid2d.FixedGrid[int]) int {
 	}
 
 	sum := 0
-	peaks := grid2d.SparseGrid[struct{}]{}
-	var queue []grid2d.Point
+	peaks := lib2.SparseGrid2i[struct{}]{}
+	var queue []lib2.Vec2i
 	for t := range trailheads {
 		clear(peaks)
 		clear(queue)
@@ -98,7 +94,7 @@ func part2(grid grid2d.FixedGrid[int]) int {
 		for len(queue) > 0 {
 			p := queue[len(queue)-1]
 			queue = queue[:len(queue)-1]
-			height := grid.Get(p)
+			height := lib.OK(grid.Get(p))
 
 			if height >= 9 {
 				rating++
@@ -107,7 +103,7 @@ func part2(grid grid2d.FixedGrid[int]) int {
 
 			for _, dir := range dirs {
 				next := p.Plus(dir)
-				if grid.Get(next) == height+1 {
+				if lib.IgnoreOK(grid.Get(next)) == height+1 {
 					queue = append(queue, next)
 				}
 			}

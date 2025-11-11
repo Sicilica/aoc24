@@ -6,8 +6,7 @@ import (
 	"strings"
 
 	"github.com/Sicilica/aoc24/lib"
-	"github.com/Sicilica/aoc24/lib/grid2d"
-	"github.com/Sicilica/aoc24/lib/grid3d"
+	"github.com/Sicilica/aoc24/lib2"
 )
 
 //go:embed input.txt
@@ -21,10 +20,10 @@ func main() {
 	)
 }
 
-func input() (grid2d.FixedGrid[bool], grid2d.Point) {
+func input() (lib2.FixedGrid2[bool], lib2.Vec2i) {
 	y := -1
-	startPos := grid2d.Point{-1, -1}
-	data := grid2d.Transpose(slices.Collect(lib.MapSeq(strings.Lines(rawInput), func(l string) []bool {
+	startPos := lib2.Vec2i{-1, -1}
+	data := lib2.Transpose(slices.Collect(lib.MapSeq(strings.Lines(rawInput), func(l string) []bool {
 		y++
 		x := -1
 		return lib.Map(strings.Split(strings.TrimSpace(l), ""), func(s string) bool {
@@ -38,7 +37,7 @@ func input() (grid2d.FixedGrid[bool], grid2d.Point) {
 				return true
 			case '^':
 				lib.Assert(startPos[0] == -1)
-				startPos = grid2d.Point{x, y}
+				startPos = lib2.Vec2i{x, y}
 				return false
 			default:
 				panic("invalid input")
@@ -49,10 +48,10 @@ func input() (grid2d.FixedGrid[bool], grid2d.Point) {
 	return data, startPos
 }
 
-func part1(data grid2d.FixedGrid[bool], startPos grid2d.Point) int {
-	visited := make(grid2d.SparseGrid[struct{}])
+func part1(data lib2.FixedGrid2[bool], startPos lib2.Vec2i) int {
+	visited := make(lib2.SparseGrid2i[struct{}])
 
-	dirs := []grid2d.Point{
+	dirs := []lib2.Vec2i{
 		{0, -1}, // start facing up
 		{1, 0},  // turn to the right
 		{0, 1},
@@ -68,7 +67,7 @@ func part1(data grid2d.FixedGrid[bool], startPos grid2d.Point) int {
 		if !data.Bounds().Contains(pos) {
 			break
 		}
-		if data.Get(pos) {
+		if lib.IgnoreOK(data.Get(pos)) {
 			pos = pos.Minus(dirs[dirIndex])
 			dirIndex = (dirIndex + 1) % len(dirs)
 		}
@@ -77,8 +76,8 @@ func part1(data grid2d.FixedGrid[bool], startPos grid2d.Point) int {
 	return len(visited)
 }
 
-func part2(data grid2d.FixedGrid[bool], startPos grid2d.Point) int {
-	dirs := []grid2d.Point{
+func part2(data lib2.FixedGrid2[bool], startPos lib2.Vec2i) int {
+	dirs := []lib2.Vec2i{
 		{0, -1}, // start facing up
 		{1, 0},  // turn to the right
 		{0, 1},
@@ -86,10 +85,10 @@ func part2(data grid2d.FixedGrid[bool], startPos grid2d.Point) int {
 	}
 
 	count := 0
-	visitedWithDir := make(grid3d.SparseGrid[struct{}])
-	for ox := range data.Width() {
-		for oy := range data.Height() {
-			obs := grid2d.Point{ox, oy}
+	visitedWithDir := make(lib2.SparseGrid3i[struct{}])
+	for ox := range data.Size().X() {
+		for oy := range data.Size().Y() {
+			obs := lib2.Vec2i{ox, oy}
 			// Don't place on top of the guard
 			if obs.Equals(startPos) {
 				continue
@@ -100,7 +99,7 @@ func part2(data grid2d.FixedGrid[bool], startPos grid2d.Point) int {
 			dirIndex := 0
 			var looped bool
 			for {
-				visit := grid3d.Point{pos.X(), pos.Y(), dirIndex}
+				visit := lib2.Vec3i{pos.X(), pos.Y(), dirIndex}
 				if visitedWithDir.Has(visit) {
 					looped = true
 					break
@@ -112,7 +111,7 @@ func part2(data grid2d.FixedGrid[bool], startPos grid2d.Point) int {
 					looped = false
 					break
 				}
-				if data.Get(pos) || pos.Equals(obs) {
+				if lib.IgnoreOK(data.Get(pos)) || pos.Equals(obs) {
 					pos = pos.Minus(dirs[dirIndex])
 					dirIndex = (dirIndex + 1) % len(dirs)
 				}

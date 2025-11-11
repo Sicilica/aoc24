@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/Sicilica/aoc24/lib"
-	"github.com/Sicilica/aoc24/lib/grid2d"
+	"github.com/Sicilica/aoc24/lib2"
 )
 
 //go:embed input.txt
@@ -21,8 +21,8 @@ func main() {
 	)
 }
 
-func input() grid2d.FixedGrid[byte] {
-	return grid2d.Transpose(slices.Collect(lib.MapSeq(strings.Lines(rawInput), func(l string) []byte {
+func input() lib2.FixedGrid2[byte] {
+	return lib2.Transpose(slices.Collect(lib.MapSeq(strings.Lines(rawInput), func(l string) []byte {
 		return lib.Map(strings.Split(strings.TrimSpace(l), ""), func(s string) byte {
 			lib.Assert(len(s) == 1)
 			return s[0]
@@ -30,7 +30,7 @@ func input() grid2d.FixedGrid[byte] {
 	})))
 }
 
-var dirs = []grid2d.Point{
+var dirs = []lib2.Vec2i{
 	{1, 0},
 	{-1, 0},
 	{0, 1},
@@ -41,26 +41,26 @@ var dirs = []grid2d.Point{
 	{-1, 1},
 }
 
-func part1(input grid2d.FixedGrid[byte]) int {
+func part1(input lib2.FixedGrid2[byte]) int {
 	count := 0
 	for s := range search(input, 'X') {
-		count += lib.Count(dirs, func(dir grid2d.Point) bool {
+		count += lib.Count(dirs, func(dir lib2.Vec2i) bool {
 			return matches(input, s, dir, "XMAS")
 		})
 	}
 	return count
 }
 
-func part2(input grid2d.FixedGrid[byte]) int {
+func part2(input lib2.FixedGrid2[byte]) int {
 	count := 0
 	for s := range search(input, 'A') {
-		if s.OnEdge(input.Bounds()) {
-			// too close to the edge; skip this one
-			continue
-		}
+		// if s.OnEdge(input.Bounds()) {
+		// 	// too close to the edge; skip this one
+		// 	continue
+		// }
 
-		leftDiag := matches(input, s.Plus(grid2d.Point{-1, -1}), grid2d.Point{1, 1}, "MAS") || matches(input, s.Plus(grid2d.Point{1, 1}), grid2d.Point{-1, -1}, "MAS")
-		rightDiag := matches(input, s.Plus(grid2d.Point{-1, 1}), grid2d.Point{1, -1}, "MAS") || matches(input, s.Plus(grid2d.Point{1, -1}), grid2d.Point{-1, 1}, "MAS")
+		leftDiag := matches(input, s.Plus(lib2.Vec2i{-1, -1}), lib2.Vec2i{1, 1}, "MAS") || matches(input, s.Plus(lib2.Vec2i{1, 1}), lib2.Vec2i{-1, -1}, "MAS")
+		rightDiag := matches(input, s.Plus(lib2.Vec2i{-1, 1}), lib2.Vec2i{1, -1}, "MAS") || matches(input, s.Plus(lib2.Vec2i{1, -1}), lib2.Vec2i{-1, 1}, "MAS")
 		if leftDiag && rightDiag {
 			count++
 		}
@@ -69,19 +69,17 @@ func part2(input grid2d.FixedGrid[byte]) int {
 }
 
 // search finds each occurrence of target anywhere in the data.
-func search(data grid2d.FixedGrid[byte], target byte) iter.Seq[grid2d.Point] {
-	return grid2d.FindIndex(data, func(val byte) bool {
-		return val == target
-	})
+func search(data lib2.FixedGrid2[byte], target byte) iter.Seq[lib2.Vec2i] {
+	return lib2.Indices(data.All(), target)
 }
 
-func matches(data grid2d.FixedGrid[byte], start, dir grid2d.Point, target string) bool {
+func matches(data lib2.FixedGrid2[byte], start, dir lib2.Vec2i, target string) bool {
 	pos := start
 	for i := 0; i < len(target); i++ {
 		if !data.Bounds().Contains(pos) {
 			return false
 		}
-		if data.Get(pos) != target[i] {
+		if lib.IgnoreOK(data.Get(pos)) != target[i] {
 			return false
 		}
 		pos = pos.Plus(dir)
