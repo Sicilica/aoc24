@@ -21,26 +21,22 @@ func main() {
 }
 
 func input() []uint64 {
-	return lib.Map(strings.Split(strings.TrimSpace(rawInput), " "), func(s string) uint64 {
+	return lib.MapSlice(strings.Split(strings.TrimSpace(rawInput), " "), func(s string) uint64 {
 		i := lib.Atoi64(s)
 		return uint64(i)
 	})
 }
 
 func part1(stones []uint64) int {
-	return lib.ReduceSeq(lib.MapSeq(slices.Values(stones), func(stone uint64) int {
+	return lib.Sum(lib.Map(slices.Values(stones), func(stone uint64) int {
 		return stoneCount(stone, 25)
-	}), func(a, b int) int {
-		return a + b
-	}, 0)
+	}))
 }
 
 func part2(stones []uint64) int {
-		return lib.ReduceSeq(lib.MapSeq(slices.Values(stones), func(stone uint64) int {
+	return lib.Sum(lib.Map(slices.Values(stones), func(stone uint64) int {
 		return stoneCount(stone, 75)
-	}), func(a, b int) int {
-		return a + b
-	}, 0)
+	}))
 }
 
 type MemoKey struct {

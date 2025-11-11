@@ -29,11 +29,11 @@ type InputEntry struct {
 
 func input() []InputEntry {
 	r := regexp.MustCompile(`(\d+): ([\d ]+)`)
-	return slices.Collect(lib.MapSeq(strings.Lines(rawInput), func(l string) InputEntry {
+	return slices.Collect(lib.Map(strings.Lines(rawInput), func(l string) InputEntry {
 		m := lib.Match(r, l)
 		return InputEntry{
 			Sum:     lib.Atoi64(m[1]),
-			Numbers: lib.Map(strings.Split(m[2], " "), lib.Atoi64),
+			Numbers: lib.MapSlice(strings.Split(m[2], " "), lib.Atoi64),
 		}
 	}))
 }

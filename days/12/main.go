@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/Sicilica/aoc24/lib"
-	"github.com/Sicilica/aoc24/lib2"
 )
 
 //go:embed input.txt
@@ -20,16 +19,16 @@ func main() {
 	)
 }
 
-func input() lib2.FixedGrid2[byte] {
-	return lib2.Transpose(slices.Collect(lib.MapSeq(strings.Lines(rawInput), func(l string) []byte {
-		return lib.Map(strings.Split(strings.TrimSpace(l), ""), func(s string) byte {
+func input() lib.FixedGrid2[byte] {
+	return lib.Transpose(slices.Collect(lib.Map(strings.Lines(rawInput), func(l string) []byte {
+		return lib.MapSlice(strings.Split(strings.TrimSpace(l), ""), func(s string) byte {
 			lib.Assert(len(s) == 1)
 			return s[0]
 		})
 	})))
 }
 
-func part1(grid lib2.FixedGrid2[byte]) int {
+func part1(grid lib.FixedGrid2[byte]) int {
 	totalCost := 0
 	for _, r := range gridToRegions(grid) {
 		area := len(r.Plots)
@@ -39,7 +38,7 @@ func part1(grid lib2.FixedGrid2[byte]) int {
 	return totalCost
 }
 
-func part2(grid lib2.FixedGrid2[byte]) int {
+func part2(grid lib.FixedGrid2[byte]) int {
 	totalCost := 0
 	for _, r := range gridToRegions(grid) {
 		area := len(r.Plots)
@@ -51,20 +50,20 @@ func part2(grid lib2.FixedGrid2[byte]) int {
 
 type Region struct {
 	Plant byte
-	Plots lib2.SparseGrid2i[struct{}]
+	Plots lib.SparseGrid2i[struct{}]
 }
 
-var dirs = []lib2.Vec2i{
+var dirs = []lib.Vec2i{
 	{1, 0},
 	{0, 1},
 	{-1, 0},
 	{0, -1},
 }
 
-func gridToRegions(grid lib2.Grid2i[byte]) []Region {
+func gridToRegions(grid lib.Grid2i[byte]) []Region {
 	var regions []Region
-	explored := make(lib2.SparseGrid2i[struct{}])
-	var queue []lib2.Vec2i
+	explored := make(lib.SparseGrid2i[struct{}])
+	var queue []lib.Vec2i
 	for plot, plant := range grid.All() {
 		if explored.Has(plot) {
 			continue
@@ -73,7 +72,7 @@ func gridToRegions(grid lib2.Grid2i[byte]) []Region {
 		clear(queue)
 		explored.Set(plot, struct{}{})
 		queue = append(queue, plot)
-		regionPlots := make(lib2.SparseGrid2i[struct{}])
+		regionPlots := make(lib.SparseGrid2i[struct{}])
 		for len(queue) > 0 {
 			p := queue[len(queue)-1]
 			queue = queue[:len(queue)-1]
@@ -96,7 +95,7 @@ func gridToRegions(grid lib2.Grid2i[byte]) []Region {
 	return regions
 }
 
-func perimeter[T any](grid lib2.SparseGrid2i[T]) int {
+func perimeter[T any](grid lib.SparseGrid2i[T]) int {
 	sum := 0
 	for p := range grid.All() {
 		for _, dir := range dirs {
@@ -108,10 +107,10 @@ func perimeter[T any](grid lib2.SparseGrid2i[T]) int {
 	return sum
 }
 
-func sides[T any](grid lib2.SparseGrid2i[T]) int {
+func sides[T any](grid lib.SparseGrid2i[T]) int {
 	sum := 0
-	explored := make(lib2.SparseGrid2i[struct{}])
-	var queue []lib2.Vec2i
+	explored := make(lib.SparseGrid2i[struct{}])
+	var queue []lib.Vec2i
 	for _, dir := range dirs {
 		clear(explored)
 		for p := range grid.All() {
@@ -149,9 +148,9 @@ func sides[T any](grid lib2.SparseGrid2i[T]) int {
 	return sum
 }
 
-func axisForDir(dir lib2.Vec2i) lib2.Vec2i {
+func axisForDir(dir lib.Vec2i) lib.Vec2i {
 	if dir.X() == 0 {
-		return lib2.Vec2i{1, 0}
+		return lib.Vec2i{1, 0}
 	}
-	return lib2.Vec2i{0, 1}
+	return lib.Vec2i{0, 1}
 }

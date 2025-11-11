@@ -9,7 +9,6 @@ import (
 	"strings"
 
 	"github.com/Sicilica/aoc24/lib"
-	"github.com/Sicilica/aoc24/lib2"
 )
 
 //go:embed input.txt
@@ -24,9 +23,9 @@ func main() {
 }
 
 type Machine struct {
-	A     lib2.Vec2i
-	B     lib2.Vec2i
-	Prize lib2.Vec2i
+	A     lib.Vec2i
+	B     lib.Vec2i
+	Prize lib.Vec2i
 }
 
 func input() []Machine {
@@ -38,7 +37,7 @@ func input() []Machine {
 	for l := range strings.Lines(rawInput) {
 		if strings.HasPrefix(l, "Button") {
 			m := lib.Match(buttonReg, l)
-			button := lib2.Vec2i{
+			button := lib.Vec2i{
 				lib.Atoi(m[2]),
 				lib.Atoi(m[3]),
 			}
@@ -49,7 +48,7 @@ func input() []Machine {
 			}
 		} else if strings.HasPrefix(l, "Prize") {
 			m := lib.Match(prizeReg, l)
-			machine.Prize = lib2.Vec2i{
+			machine.Prize = lib.Vec2i{
 				lib.Atoi(m[1]),
 				lib.Atoi(m[2]),
 			}
@@ -60,41 +59,37 @@ func input() []Machine {
 }
 
 func part1(machines []Machine) int {
-	return lib.ReduceSeq(lib.MapSeq(slices.Values(machines), func(m Machine) int {
+	return lib.Sum(lib.Map(slices.Values(machines), func(m Machine) int {
 		return m.Cost(3, 1, 100)
-	}), func(a, b int) int {
-		return a + b
-	}, 0)
+	}))
 }
 
 func part2(machines []Machine) int64 {
-	return lib.ReduceSeq(lib.MapSeq(slices.Values(machines), func(m Machine) int64 {
+	return lib.Sum(lib.Map(slices.Values(machines), func(m Machine) int64 {
 		return m.CostBig(3, 1, 10000000000000)
-	}), func(a, b int64) int64 {
-		return a + b
-	}, 0)
+	}))
 }
 
 func (m Machine) Cost(aCost, bCost, maxPresses int) int {
-	return lib.ReduceSeq(lib.MapSeq2(m.Solutions(maxPresses), func(a, b int) int {
+	return lib.Reduce(lib.Map2(m.Solutions(maxPresses), func(a, b int) int {
 		return a*aCost + b*bCost
-	}), func(a, b int) int {
+	}), 0, func(a, b int) int {
 		if a == 0 || a > b {
 			return b
 		}
 		return a
-	}, 0)
+	})
 }
 
 func (m Machine) CostBig(aCost, bCost, offset int64) int64 {
-	return lib.ReduceSeq(lib.MapSeq2(m.SolutionsBig(offset), func(a, b int64) int64 {
+	return lib.Reduce(lib.Map2(m.SolutionsBig(offset), func(a, b int64) int64 {
 		return a*aCost + b*bCost
-	}), func(a, b int64) int64 {
+	}), 0, func(a, b int64) int64 {
 		if a == 0 || a > b {
 			return b
 		}
 		return a
-	}, 0)
+	})
 }
 
 func (m Machine) Solutions(maxPresses int) iter.Seq2[int, int] {

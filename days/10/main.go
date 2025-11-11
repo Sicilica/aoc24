@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/Sicilica/aoc24/lib"
-	"github.com/Sicilica/aoc24/lib2"
 )
 
 //go:embed input.txt
@@ -20,16 +19,16 @@ func main() {
 	)
 }
 
-func input() lib2.FixedGrid2[int] {
-	return lib2.Transpose(slices.Collect(lib.MapSeq(strings.Lines(rawInput), func(l string) []int {
-		return lib.Map(strings.Split(strings.TrimSpace(l), ""), lib.Atoi)
+func input() lib.FixedGrid2[int] {
+	return lib.Transpose(slices.Collect(lib.Map(strings.Lines(rawInput), func(l string) []int {
+		return lib.MapSlice(strings.Split(strings.TrimSpace(l), ""), lib.Atoi)
 	})))
 }
 
-func part1(grid lib2.FixedGrid2[int]) int {
-	trailheads := lib2.Indices(grid.All(), 0)
+func part1(grid lib.FixedGrid2[int]) int {
+	trailheads := lib.Indices(grid.All(), 0)
 
-	dirs := []lib2.Vec2i{
+	dirs := []lib.Vec2i{
 		{1, 0},
 		{0, 1},
 		{-1, 0},
@@ -37,9 +36,9 @@ func part1(grid lib2.FixedGrid2[int]) int {
 	}
 
 	sum := 0
-	peaks := lib2.SparseGrid2i[struct{}]{}
-	explored := lib2.SparseGrid2i[struct{}]{}
-	var queue []lib2.Vec2i
+	peaks := lib.SparseGrid2i[struct{}]{}
+	explored := lib.SparseGrid2i[struct{}]{}
+	var queue []lib.Vec2i
 	for t := range trailheads {
 		clear(peaks)
 		clear(explored)
@@ -71,10 +70,10 @@ func part1(grid lib2.FixedGrid2[int]) int {
 	return sum
 }
 
-func part2(grid lib2.FixedGrid2[int]) int {
-	trailheads := lib2.Indices(grid.All(), 0)
+func part2(grid lib.FixedGrid2[int]) int {
+	trailheads := lib.Indices(grid.All(), 0)
 
-	dirs := []lib2.Vec2i{
+	dirs := []lib.Vec2i{
 		{1, 0},
 		{0, 1},
 		{-1, 0},
@@ -82,8 +81,8 @@ func part2(grid lib2.FixedGrid2[int]) int {
 	}
 
 	sum := 0
-	peaks := lib2.SparseGrid2i[struct{}]{}
-	var queue []lib2.Vec2i
+	peaks := lib.SparseGrid2i[struct{}]{}
+	var queue []lib.Vec2i
 	for t := range trailheads {
 		clear(peaks)
 		clear(queue)

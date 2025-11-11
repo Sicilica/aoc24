@@ -1,7 +1,8 @@
-package lib2
+package lib
 
 import (
 	"iter"
+	"slices"
 )
 
 // Count returns the number of elements in the Seq[T].
@@ -183,6 +184,11 @@ func Reduce[T any, U any](it iter.Seq[T], initial U, fn func(U, T) U) U {
 		acc = fn(acc, t)
 	}
 	return acc
+}
+
+// Seq returns an iterator over the elements of the slice.
+func Seq[T any](s []T) iter.Seq[T] {
+	return slices.Values(s)
 }
 
 // Some returns true if any element in the Seq[T] satisfies the predicate.

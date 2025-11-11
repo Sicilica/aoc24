@@ -1,4 +1,4 @@
-package lib2
+package lib
 
 type boxVec[Self any] interface {
 	comparable

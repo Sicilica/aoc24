@@ -1,4 +1,4 @@
-package lib2
+package lib
 
 type Vec2[T Real] [2]T
 

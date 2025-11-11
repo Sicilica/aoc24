@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/Sicilica/aoc24/lib"
-	"github.com/Sicilica/aoc24/lib2"
 )
 
 //go:embed input.txt
@@ -20,9 +19,9 @@ func main() {
 	)
 }
 
-func input() (lib2.FixedGrid2[byte], map[byte][]lib2.Vec2i) {
-	grid := lib2.Transpose(slices.Collect(lib.MapSeq(strings.Lines(rawInput), func(l string) []byte {
-		return lib.Map(strings.Split(strings.TrimSpace(l), ""), func(s string) byte {
+func input() (lib.FixedGrid2[byte], map[byte][]lib.Vec2i) {
+	grid := lib.Transpose(slices.Collect(lib.Map(strings.Lines(rawInput), func(l string) []byte {
+		return lib.MapSlice(strings.Split(strings.TrimSpace(l), ""), func(s string) byte {
 			lib.Assert(len(s) == 1)
 
 			if s[0] == '.' {
@@ -32,19 +31,19 @@ func input() (lib2.FixedGrid2[byte], map[byte][]lib2.Vec2i) {
 		})
 	})))
 
-	antennas := make(map[byte][]lib2.Vec2i)
+	antennas := make(map[byte][]lib.Vec2i)
 	for x := range grid.Size().X() {
 		for y := range grid.Size().Y() {
 			if grid[x][y] != 0 {
-				antennas[grid[x][y]] = append(antennas[grid[x][y]], lib2.Vec2i{x, y})
+				antennas[grid[x][y]] = append(antennas[grid[x][y]], lib.Vec2i{x, y})
 			}
 		}
 	}
 	return grid, antennas
 }
 
-func part1(grid lib2.FixedGrid2[byte], antennas map[byte][]lib2.Vec2i) int {
-	antinodes := lib2.MakeFixedGrid2[bool](grid.Size().X(), grid.Size().Y())
+func part1(grid lib.FixedGrid2[byte], antennas map[byte][]lib.Vec2i) int {
+	antinodes := lib.MakeFixedGrid2[bool](grid.Size().X(), grid.Size().Y())
 
 	for _, antennas := range antennas {
 		for a, b := range lib.Pairs(antennas) {
@@ -54,11 +53,11 @@ func part1(grid lib2.FixedGrid2[byte], antennas map[byte][]lib2.Vec2i) int {
 		}
 	}
 
-	return lib2.Count(lib2.Indices(antinodes.All(), true))
+	return lib.Count(lib.Indices(antinodes.All(), true))
 }
 
-func part2(grid lib2.FixedGrid2[byte], antennas map[byte][]lib2.Vec2i) int {
-	antinodes := lib2.MakeFixedGrid2[bool](grid.Size().X(), grid.Size().Y())
+func part2(grid lib.FixedGrid2[byte], antennas map[byte][]lib.Vec2i) int {
+	antinodes := lib.MakeFixedGrid2[bool](grid.Size().X(), grid.Size().Y())
 
 	for _, antennas := range antennas {
 		for a, b := range lib.Pairs(antennas) {
@@ -76,5 +75,5 @@ func part2(grid lib2.FixedGrid2[byte], antennas map[byte][]lib2.Vec2i) int {
 		}
 	}
 
-	return lib2.Count(lib2.Indices(antinodes.All(), true))
+	return lib.Count(lib.Indices(antinodes.All(), true))
 }

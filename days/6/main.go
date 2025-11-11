@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/Sicilica/aoc24/lib"
-	"github.com/Sicilica/aoc24/lib2"
 )
 
 //go:embed input.txt
@@ -20,13 +19,13 @@ func main() {
 	)
 }
 
-func input() (lib2.FixedGrid2[bool], lib2.Vec2i) {
+func input() (lib.FixedGrid2[bool], lib.Vec2i) {
 	y := -1
-	startPos := lib2.Vec2i{-1, -1}
-	data := lib2.Transpose(slices.Collect(lib.MapSeq(strings.Lines(rawInput), func(l string) []bool {
+	startPos := lib.Vec2i{-1, -1}
+	data := lib.Transpose(slices.Collect(lib.Map(strings.Lines(rawInput), func(l string) []bool {
 		y++
 		x := -1
-		return lib.Map(strings.Split(strings.TrimSpace(l), ""), func(s string) bool {
+		return lib.MapSlice(strings.Split(strings.TrimSpace(l), ""), func(s string) bool {
 			x++
 			lib.Assert(len(s) == 1)
 
@@ -37,7 +36,7 @@ func input() (lib2.FixedGrid2[bool], lib2.Vec2i) {
 				return true
 			case '^':
 				lib.Assert(startPos[0] == -1)
-				startPos = lib2.Vec2i{x, y}
+				startPos = lib.Vec2i{x, y}
 				return false
 			default:
 				panic("invalid input")
@@ -48,10 +47,10 @@ func input() (lib2.FixedGrid2[bool], lib2.Vec2i) {
 	return data, startPos
 }
 
-func part1(data lib2.FixedGrid2[bool], startPos lib2.Vec2i) int {
-	visited := make(lib2.SparseGrid2i[struct{}])
+func part1(data lib.FixedGrid2[bool], startPos lib.Vec2i) int {
+	visited := make(lib.SparseGrid2i[struct{}])
 
-	dirs := []lib2.Vec2i{
+	dirs := []lib.Vec2i{
 		{0, -1}, // start facing up
 		{1, 0},  // turn to the right
 		{0, 1},
@@ -76,8 +75,8 @@ func part1(data lib2.FixedGrid2[bool], startPos lib2.Vec2i) int {
 	return len(visited)
 }
 
-func part2(data lib2.FixedGrid2[bool], startPos lib2.Vec2i) int {
-	dirs := []lib2.Vec2i{
+func part2(data lib.FixedGrid2[bool], startPos lib.Vec2i) int {
+	dirs := []lib.Vec2i{
 		{0, -1}, // start facing up
 		{1, 0},  // turn to the right
 		{0, 1},
@@ -85,10 +84,10 @@ func part2(data lib2.FixedGrid2[bool], startPos lib2.Vec2i) int {
 	}
 
 	count := 0
-	visitedWithDir := make(lib2.SparseGrid3i[struct{}])
+	visitedWithDir := make(lib.SparseGrid3i[struct{}])
 	for ox := range data.Size().X() {
 		for oy := range data.Size().Y() {
-			obs := lib2.Vec2i{ox, oy}
+			obs := lib.Vec2i{ox, oy}
 			// Don't place on top of the guard
 			if obs.Equals(startPos) {
 				continue
@@ -99,7 +98,7 @@ func part2(data lib2.FixedGrid2[bool], startPos lib2.Vec2i) int {
 			dirIndex := 0
 			var looped bool
 			for {
-				visit := lib2.Vec3i{pos.X(), pos.Y(), dirIndex}
+				visit := lib.Vec3i{pos.X(), pos.Y(), dirIndex}
 				if visitedWithDir.Has(visit) {
 					looped = true
 					break

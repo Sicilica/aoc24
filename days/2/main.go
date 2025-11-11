@@ -20,17 +20,17 @@ func main() {
 }
 
 func input() [][]int {
-	return slices.Collect(lib.MapSeq(strings.Lines(rawInput), func(l string) []int {
-		return lib.Map(strings.Split(l, " "), lib.Atoi)
+	return slices.Collect(lib.Map(strings.Lines(rawInput), func(l string) []int {
+		return lib.MapSlice(strings.Split(l, " "), lib.Atoi)
 	}))
 }
 
 func part1(reports [][]int) int {
-	return lib.Count(reports, safe)
+	return lib.CountFunc(slices.Values(reports), safe)
 }
 
 func part2(reports [][]int) int {
-	return lib.Count(reports, func(r []int) bool {
+	return lib.CountFunc(slices.Values(reports), func(r []int) bool {
 		subReport := make([]int, len(r)-1)
 		for i := range r {
 			copy(subReport[0:], r[0:i])
@@ -56,9 +56,9 @@ func safe(r []int) bool {
 		return false
 	}
 
-	return lib.Every(deltas, func(d int) bool {
+	return lib.Every(slices.Values(deltas), func(d int) bool {
 		return d >= 0
-	}) || lib.Every(deltas, func(d int) bool {
+	}) || lib.Every(slices.Values(deltas), func(d int) bool {
 		return d <= 0
 	})
 }

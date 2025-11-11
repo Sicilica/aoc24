@@ -6,6 +6,10 @@ func Assert(cond bool) {
 	}
 }
 
+func IgnoreOK[T any](v T, ok bool) T {
+	return v
+}
+
 func Must[T any](v T, err error) T {
 	NoErr(err)
 	return v
@@ -27,9 +31,5 @@ func NotNil[T any](v *T) *T {
 
 func OK[T any](v T, ok bool) T {
 	Assert(ok)
-	return v
-}
-
-func IgnoreOK[T any](v T, ok bool) T {
 	return v
 }

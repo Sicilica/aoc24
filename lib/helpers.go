@@ -1,6 +1,4 @@
-package lib2
-
-import "github.com/Sicilica/aoc24/lib"
+package lib
 
 // MakeFixedGrid2 creates a new FixedGrid2 with the given dimensions.
 func MakeFixedGrid2[Data any](w, h int) FixedGrid2[Data] {
@@ -18,7 +16,7 @@ func MakeFixedGrid2T[T ~int, Data any](w, h T) FixedGrid2t[T, Data] {
 
 // TransposeT is similar to Transpose, but for FixedGrid2t.
 func TransposeT[T ~int, Data any](g FixedGrid2t[T, Data]) FixedGrid2t[T, Data] {
-	lib.Assert(g.Valid())
+	Assert(g.Valid())
 	size := g.Size()
 	out := make(FixedGrid2t[T, Data], size.Y())
 	for y := range size.Y() {

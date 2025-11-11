@@ -24,10 +24,10 @@ func input() ([][2]int, [][]int) {
 	var updates [][]int
 	for l := range strings.Lines(rawInput) {
 		if strings.Contains(l, "|") {
-			parts := lib.Map(strings.SplitN(l, "|", 2), lib.Atoi)
+			parts := lib.MapSlice(strings.SplitN(l, "|", 2), lib.Atoi)
 			rules = append(rules, [2]int{parts[0], parts[1]})
 		} else if strings.Contains(l, ",") {
-			update := lib.Map(strings.Split(l, ","), lib.Atoi)
+			update := lib.MapSlice(strings.Split(l, ","), lib.Atoi)
 			lib.Assert(len(update)%2 == 1)
 			updates = append(updates, update)
 		}
