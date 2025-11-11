@@ -63,19 +63,18 @@ var dirs = []lib.Vec2i{
 func gridToRegions(grid lib.Grid2i[byte]) []Region {
 	var regions []Region
 	explored := make(lib.SparseGrid2i[struct{}])
-	var queue []lib.Vec2i
+	queue := lib.NewStack[lib.Vec2i]()
 	for plot, plant := range grid.All() {
 		if explored.Has(plot) {
 			continue
 		}
 
-		clear(queue)
+		queue.Clear()
 		explored.Set(plot, struct{}{})
-		queue = append(queue, plot)
+		queue.Push(plot)
 		regionPlots := make(lib.SparseGrid2i[struct{}])
-		for len(queue) > 0 {
-			p := queue[len(queue)-1]
-			queue = queue[:len(queue)-1]
+		for queue.Len() > 0 {
+			p := queue.Pop()
 
 			regionPlots.Set(p, struct{}{})
 
@@ -83,7 +82,7 @@ func gridToRegions(grid lib.Grid2i[byte]) []Region {
 				next := p.Plus(dir)
 				if lib.IgnoreOK(grid.Get(next)) == plant && !explored.Has(next) {
 					explored.Set(next, struct{}{})
-					queue = append(queue, next)
+					queue.Push(next)
 				}
 			}
 		}
@@ -110,7 +109,7 @@ func perimeter[T any](grid lib.SparseGrid2i[T]) int {
 func sides[T any](grid lib.SparseGrid2i[T]) int {
 	sum := 0
 	explored := make(lib.SparseGrid2i[struct{}])
-	var queue []lib.Vec2i
+	queue := lib.NewStack[lib.Vec2i]()
 	for _, dir := range dirs {
 		clear(explored)
 		for p := range grid.All() {
@@ -124,22 +123,21 @@ func sides[T any](grid lib.SparseGrid2i[T]) int {
 			}
 
 			axis := axisForDir(dir)
-			clear(queue)
-			queue = append(queue, p)
-			for len(queue) > 0 {
-				p := queue[len(queue)-1]
-				queue = queue[:len(queue)-1]
+			queue.Clear()
+			queue.Push(p)
+			for queue.Len() > 0 {
+				p := queue.Pop()
 
 				left := p.Minus(axis)
 				if grid.Has(left) && !explored.Has(left) && !grid.Has(left.Plus(dir)) {
 					explored.Set(left, struct{}{})
-					queue = append(queue, left)
+					queue.Push(left)
 				}
 
 				right := p.Plus(axis)
 				if grid.Has(right) && !explored.Has(right) && !grid.Has(right.Plus(dir)) {
 					explored.Set(right, struct{}{})
-					queue = append(queue, right)
+					queue.Push(right)
 				}
 			}
 			sum += 1

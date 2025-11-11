@@ -38,18 +38,17 @@ func part1(grid lib.FixedGrid2[int]) int {
 	sum := 0
 	peaks := lib.SparseGrid2i[struct{}]{}
 	explored := lib.SparseGrid2i[struct{}]{}
-	var queue []lib.Vec2i
+	queue := lib.NewStack[lib.Vec2i]()
 	for t := range trailheads {
 		clear(peaks)
 		clear(explored)
-		clear(queue)
+		queue.Clear()
 
-		queue = append(queue, t)
+		queue.Push(t)
 
 		score := 0
-		for len(queue) > 0 {
-			p := queue[len(queue)-1]
-			queue = queue[:len(queue)-1]
+		for queue.Len() > 0 {
+			p := queue.Pop()
 			height := lib.OK(grid.Get(p))
 
 			if height >= 9 {
@@ -61,7 +60,7 @@ func part1(grid lib.FixedGrid2[int]) int {
 				next := p.Plus(dir)
 				if lib.IgnoreOK(grid.Get(next)) == height+1 && !explored.Has(next) {
 					explored.Set(next, struct{}{})
-					queue = append(queue, next)
+					queue.Push(next)
 				}
 			}
 		}
@@ -82,17 +81,16 @@ func part2(grid lib.FixedGrid2[int]) int {
 
 	sum := 0
 	peaks := lib.SparseGrid2i[struct{}]{}
-	var queue []lib.Vec2i
+	queue := lib.NewStack[lib.Vec2i]()
 	for t := range trailheads {
 		clear(peaks)
-		clear(queue)
+		queue.Clear()
 
-		queue = append(queue, t)
+		queue.Push(t)
 
 		rating := 0
-		for len(queue) > 0 {
-			p := queue[len(queue)-1]
-			queue = queue[:len(queue)-1]
+		for queue.Len() > 0 {
+			p := queue.Pop()
 			height := lib.OK(grid.Get(p))
 
 			if height >= 9 {
@@ -103,7 +101,7 @@ func part2(grid lib.FixedGrid2[int]) int {
 			for _, dir := range dirs {
 				next := p.Plus(dir)
 				if lib.IgnoreOK(grid.Get(next)) == height+1 {
-					queue = append(queue, next)
+					queue.Push(next)
 				}
 			}
 		}

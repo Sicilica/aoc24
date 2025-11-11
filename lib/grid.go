@@ -2,6 +2,7 @@ package lib
 
 import (
 	"iter"
+	"maps"
 )
 
 type Grid[Pos comparable, Data any] interface {
@@ -47,6 +48,12 @@ func (g SparseGrid[V, D]) All() iter.Seq2[V, D] {
 			}
 		}
 	}
+}
+
+func (g SparseGrid[V, D]) Copy() SparseGrid[V, D] {
+	copy := make(SparseGrid[V, D], len(g))
+	maps.Copy(copy, g)
+	return copy
 }
 
 // Get returns the data at the given position, if it exists.
